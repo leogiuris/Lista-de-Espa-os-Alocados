@@ -1,6 +1,11 @@
 
 
+/////////////////////////////////////////////////
 void * AlocaLea(int tamanho);
+
+void * AlocaLeaTag(int tamanho, char * nome);
+
 void FreeLea(void * p);
+
 void ImprimeLea();
-void CriaLea();
+/////////////////////////////////////////////////

@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include"LISTA.H"
 #include"LEA.H"
 
@@ -8,30 +9,68 @@ LIS_tppLista lea;
 
 typedef struct mem{
 	void * address;
+	char * nome;
 	int size;
 }Memory;
 
 
-void imprimeEsp(Memory * f){
-	printf("entrou %p  :  %d bytes\n", f->address,f->size);
+void CriaLea();
+
+
+void imprimeEsp(Memory * f)
+{
+	if(f->nome != NULL)
+		printf("entrou %s  :  %d bytes\n", f->nome, f->size);
+	else
+		printf("entrou %p  :  %d bytes\n", f->address, f->size);
+	
 }
 
 void * AlocaLea(int tamanho)
 {
 	Memory * f = (Memory*)malloc(sizeof(Memory));
 	void * p;
+	
+	if(lea == NULL)
+		CriaLea();
+
+	
+	p = malloc(tamanho);
+
+	
+	f->address = p;
+	f->size = tamanho;
+	f->nome = NULL;
+	IrFinalLista(lea);
+	
+	;
+	LIS_InserirElementoApos(lea, f);
+
+	return p;
+}
+
+void * AlocaLeaTag(int tamanho, char * nome)
+{
+	
+	Memory * f = (Memory*)malloc(sizeof(Memory));
+	void * p;
+
+	
+
+	if(lea == NULL)
+		CriaLea();
+
 	p = malloc(tamanho);
 
 	f->address = p;
 	f->size = tamanho;
-
+	f->nome = nome;
 	IrFinalLista(lea);
 	
 	LIS_InserirElementoApos(lea, f);
 
 	return p;
 }
-
 
 void excluirNo(void * p){
 	free(p);
