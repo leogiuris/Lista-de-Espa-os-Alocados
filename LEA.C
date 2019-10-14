@@ -14,25 +14,27 @@ typedef struct mem{
 }Memory;
 
 
-void CriaLea();
+void CriarLEA();
+void DestruirLEA();
 
 
-void imprimeEsp(Memory * f)
+void imprimeMem(Memory * f)
 {
+	
 	if(f->nome != NULL)
-		printf("entrou %s  :  %d bytes\n", f->nome, f->size);
+		printf("%s  :  %d bytes\n", f->nome, f->size);
 	else
-		printf("entrou %p  :  %d bytes\n", f->address, f->size);
+		printf("%p  :  %d bytes\n", f->address, f->size);
 	
 }
 
-void * AlocaLea(int tamanho)
+void * LEA_malloc(int tamanho)
 {
 	Memory * f = (Memory*)malloc(sizeof(Memory));
 	void * p;
 	
 	if(lea == NULL)
-		CriaLea();
+		CriarLEA();
 
 	
 	p = malloc(tamanho);
@@ -43,13 +45,12 @@ void * AlocaLea(int tamanho)
 	f->nome = NULL;
 	IrFinalLista(lea);
 	
-	;
 	LIS_InserirElementoApos(lea, f);
 
 	return p;
 }
 
-void * AlocaLeaTag(int tamanho, char * nome)
+void * LEA_mallocTag(int tamanho, char * nome)
 {
 	
 	Memory * f = (Memory*)malloc(sizeof(Memory));
@@ -58,7 +59,7 @@ void * AlocaLeaTag(int tamanho, char * nome)
 	
 
 	if(lea == NULL)
-		CriaLea();
+		CriarLEA();
 
 	p = malloc(tamanho);
 
@@ -72,30 +73,27 @@ void * AlocaLeaTag(int tamanho, char * nome)
 	return p;
 }
 
+void destroiMem(Memory * mem){
+	free(mem->nome);
+	free(mem);
+	return;
+}
+
 void excluirNo(void * p){
-	free(p);
+
+	destroiMem((Memory*)p);
 }
 
-
-void ImprimeLea()
+void LEA_free(void * p)
 {
 	Memory * fat;
-	IrInicioLista(lea);
-	do
-	{
-		fat = (Memory*) LIS_ObterValor(lea);
-		imprimeEsp(fat);
-	} while(LIS_AvancarElementoCorrente(lea,1) != LIS_CondRetFimLista);
-}
+	int res = 0;
+	
+	if(lea==NULL){
+		printf("--------- LEA ----------\nlista vazia\n");
+		return;
+	}
 
-void CriaLea()
-{
-	lea = LIS_CriarLista(excluirNo);
-}
-
-void FreeLea(void * p)
-{
-	Memory * fat;
 	IrInicioLista(lea);
 	do
 	{
@@ -103,12 +101,55 @@ void FreeLea(void * p)
 		if(fat->address == p){
 			LIS_ExcluirElemento(lea);
 			free(p);
-			return;
+			res = 1;
+			break;
 		}
 
 	} while(LIS_AvancarElementoCorrente(lea,1) != LIS_CondRetFimLista);
-	printf("Endereço nao existe ou ja foi liberado.\n");
+	if(res==0)
+		printf("Endereço nao existe ou ja foi liberado.\n");
+
+	if(LIS_AvancarElementoCorrente(lea,1) == LIS_CondRetListaVazia)
+	{
+		printf("--------- LEA ----------\nMemoria esvaziada com sucesso\n\n");
+		DestruirLEA();
+	}
+	return;
 }
+
+void LEA_Imprime()
+{
+	Memory * fat;
+
+	if(lea == NULL){
+		printf("--------- LEA ----------\nlista vazia\n");
+		return;
+	}
+
+	printf("\n--------- LEA ---------\n");
+	IrInicioLista(lea);
+	do
+	{
+		fat = (Memory*) LIS_ObterValor(lea);
+		imprimeMem(fat);
+	} while(LIS_AvancarElementoCorrente(lea,1) != LIS_CondRetFimLista);
+
+	printf("\n");
+}
+
+void CriarLEA()
+{
+	lea = LIS_CriarLista(excluirNo);
+}
+
+void DestruirLEA()
+{
+	LIS_DestruirLista(lea);
+	lea = NULL;
+}
+
+
+
 
 
 //int main()
@@ -117,16 +158,16 @@ void FreeLea(void * p)
 //	char * abc;
 //	float * ff;
 //	
-//	CriaLea();
+//	CriarLEA();
 //
-//	i = (int*)AlocaLea(2*sizeof(int));
-//	abc = (char*)AlocaLea(sizeof(char));
-//	ff = (float*)AlocaLea(sizeof(float));
+//	i = (int*)LEA_mallocTag(2*sizeof(int),"cuu");
+//	abc = (char*)LEA_mallocTag(sizeof(char),"marioooo");
+//	ff = (float*)LEA_mallocTag(sizeof(float),"seu sirikejo");
 //
-//	FreeLea(i);
-//	FreeLea(i);
+//	LEA_free(i);
+//	LEA_free(i);
 //
-//	ImprimeLea(lea);
+//	LEA_Imprime();
 //
 //	return 0;
 //}
