@@ -1,3 +1,4 @@
+
 //	Modulo: Lista de Espaços Alocados  
 //	Autor: Leonardo Santiago		11/10/2019 - Rio de Janeiro
 //	
@@ -13,3 +14,11 @@ void LEA_free(void * p);
 
 void LEA_Imprime();
 /////////////////////////////////////////////////
+
+void * AlocaLea(int tamanho);
+
+void * AlocaLeaTag(int tamanho, char * nome);
+
+void ImprimeLea();
+
+void FreeLea(void * p);
